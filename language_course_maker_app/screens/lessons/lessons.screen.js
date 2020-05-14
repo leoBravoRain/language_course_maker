@@ -660,6 +660,8 @@ class Course_Lessons extends Component {
 
                                                         // check if there is previous lesson
                                                         current_lesson: this.state.current_lesson - 1,
+                                                        play_audio: false,
+                                                        play_video: false,
 
                                                     })}
                                                     
@@ -699,7 +701,8 @@ class Course_Lessons extends Component {
                                                             this.setState({
                                                                 
                                                                 current_lesson: this.state.current_lesson + 1,
-                                                                
+                                                                play_audio: false,
+                                                                play_video: false,
                                                             })
                                                         }}
 
@@ -736,6 +739,10 @@ class Course_Lessons extends Component {
                                                     mode = "contained"
                                                     onPress={() => {
 
+                                                        this.setState({
+                                                            play_audio: false,
+                                                            play_video: false,
+                                                        })
                                                         this.props.navigation.push("End_of_Course", {course: this.props.navigation.state.params.course});
                                                         
                                                     }}
