@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "612362392267",
+    "firebase_url": "https://language-course-maker.firebaseio.com",
+    "project_id": "language-course-maker",
+    "storage_bucket": "language-course-maker.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:612362392267:android:84821310ba3ffb0e35414e",
+        "android_client_info": {
+          "package_name": "com.language_course_maker_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "612362392267-9nhv6kvhjqkhducdis7rsssjm69k5usn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDjd0hhp-Qg6-dooF0A5eabgKKUcOXHhgc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "612362392267-9nhv6kvhjqkhducdis7rsssjm69k5usn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
