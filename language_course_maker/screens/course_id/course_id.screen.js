@@ -23,6 +23,7 @@ import {
     // StackActions,
 } from 'react-navigation';
 
+import firestore from '@react-native-firebase/firestore';
 
 class Course_Id extends Component {
 
@@ -74,116 +75,38 @@ class Course_Id extends Component {
     }
     
     componentDidMount() {
-
-        // // check notifications permmissions
-        // messaging().hasPermission()
-        //     .then(enabled => {
-        //         if (enabled) {
-        //             alert('Yes')
-        //         } else {
-        //             alert('No')
-        //         }
-        //     });
         
         
-        
-        // // check authentication
-        // auth().onAuthStateChanged((user) => {
-
-        //     if (user) {
-        //         // User is signed in.
-
-        //         // update state
-        //         this.setState({
-        //             loading: true,
-        //         });
-
-        //         // it gets the fcmToken from the Firebase SDK,
-        //         messaging().getToken()
-        //             .then(fcmToken => {
-        //                 if (fcmToken) {
-        //                     // user has a device token
-        //                     // //////console.log.log.log.log("it has token");
-        //                     // alert(fcmToken);
-        //                     //////console.log.log.log.log("Token: ", fcmToken);
-        //                     // update token of user
-        //                     firestore().collection('users').doc(user.uid).update({ 
-        //                             fcm_token: fcmToken,
-        //                         })       
-        //                         // if ok
-        //                         .then(response => {
-                                    
-        //                             //////console.log.log.log.log("Update user fcm token");
-                                    
-        //                             // navigate to home screen
-        //                             this.props.navigation.push("Choose_Contact");
-
-        //                         })
-        
-        //                         // if error
-        //                         .catch((error) => {
-        
-        //                             // user message
-        //                             Alert.alert(
-        //                                 'Sorry!',
-        //                                 'We had a problem, try to open the app again!',
-        //                                 [
-        //                                     { text: 'I will do it' },
-        //                                 ],
-        //                                 { cancelable: false },
-        //                             );
-        
-        //                             // dislpay error in //////console.log.log.log
-        //                             //////console.log.log.log.log(error);
-        
-        //                         });
-        
-        
-        //                 } else {
-        //                     // user doesn't have a device token yet
-        //                     //////console.log.log.log.log("it has not token");
-        
-        //                     // // it has not token
-        //                     // alert("It has not token!");
-        //                     // user message
-        //                     Alert.alert(
-        //                         'Sorry!',
-        //                         'We had a problem, try to open the app again!',
-        //                         [
-        //                             { text: 'I will do it' },
-        //                         ],
-        //                         { cancelable: false },
-        //                     );
-
-        //                     // update state
-        //                     this.setState({
-        //                         loading: false,
-        //                     });
-
-        //                 }
-        //             })
-        //             .catch(error => {
-
-        //                 //////console.log.log.log.log("error in user authentication: ", error);
-                        
-        //                 // update state
-        //                 this.setState({
-        //                     loading: false,
-        //                 });
-        //             })
-        //     }   
-        // });
     }
-
+    
     enter_course() {
 
         // do DB request and check if course ID is correct
-
-            // if it is correct, redirect to course
-            this.props.navigation.push("Course_Introduction");
+        firestore().collection("courses").doc(this.state.course_id).get()
+    
+        .then(doc => {
             
-    }
+            console.log("request");
+            
+            // check doc exists
+            if (doc.exists) {
+                
+                var course = doc.data();
 
+                // if it is correct, redirect to course
+                this.props.navigation.push("Course_Introduction", {course: course});
+            }
+
+            // if course does not exists
+            else {
+
+                alert("Sorry! We have not found a course with that ID");
+                
+            }
+        })
+
+    }
+        
     // Render method
     render() {
 

@@ -97,7 +97,8 @@ class Course_Introduction extends Component {
         super(props);
 
         this.state = {
-            course_id: null,
+            course: this.props.navigation.state.params.course,
+            // course_id: null,
             // user_email: null,
             // password: null,
             // // user_email: "leo.bravo.rain@gmail.com",
@@ -220,7 +221,7 @@ class Course_Introduction extends Component {
         // do DB request and check if course ID is correct
 
             // if it is correct, redirect to course
-            this.props.navigation.push("Course_Lessons", {course: course});
+            this.props.navigation.push("Course_Lessons", {course: this.state.course});
             
     }
 
@@ -250,15 +251,15 @@ class Course_Introduction extends Component {
                                 <View>
 
                                     <Text>
-                                        {course.course_name}
+                                        {this.state.course.course_name}
                                     </Text>
                                     
                                     <Text>
-                                        {course.course_description}
+                                        {this.state.course.course_description}
                                     </Text>
 
                                     <Text>
-                                        {course.course_author}
+                                        {this.state.course.course_author}
                                     </Text>
 
                                     <Button
