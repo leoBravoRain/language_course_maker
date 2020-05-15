@@ -2,12 +2,13 @@ import React, { Component } from 'react';
 import {
     // Alert,
     // // Platform,
-    StyleSheet,
+    // StyleSheet,
     // Button,
     // Text,
     View,
+    Linking,
     // Image,
-    ProgressBarAndroid,
+    // ProgressBarAndroid,
     // FlatList,
     // ImageBackground,
     // TouchableOpacity
@@ -29,9 +30,18 @@ import {
     Button, 
     Card, 
     // Title, 
+    // Text,
+    Badge,
+    Caption,
     Paragraph,
     ActivityIndicator,
 } from 'react-native-paper';
+
+import auth from '@react-native-firebase/auth';
+
+import App_Bar from "../../components/app_bar/app_bar.component";
+
+var logged_user = null;
 
 class Course_Introduction extends Component {
 
@@ -39,8 +49,8 @@ class Course_Introduction extends Component {
     static navigationOptions = ({ navigation }) => {
 
         return {
-            title: navigation.state.params.course.course_name,
-            // header: null,
+            // title: navigation.state.params.course.course_name,
+            header: null,
             // header: "Welcome",
             //   headerLeft: null,
             // headerLeft: <Image 
@@ -75,8 +85,10 @@ class Course_Introduction extends Component {
             // // password: "123456",
             // // user_email: "1andreatapiasalinas@gmail.com",
             // // password: "123123",
-            loading: false,
+            loading: true,
         };
+
+        console.log("(course_introduction registered users: ", this.state.course.registered_users);
 
         this.start_course = this.start_course.bind(this);
         // this.register = this.register.bind(this);
@@ -86,104 +98,41 @@ class Course_Introduction extends Component {
     
     componentDidMount() {
 
-        // // check notifications permmissions
-        // messaging().hasPermission()
-        //     .then(enabled => {
-        //         if (enabled) {
-        //             alert('Yes')
-        //         } else {
-        //             alert('No')
-        //         }
-        //     });
-        
-        
-        
-        // // check authentication
-        // auth().onAuthStateChanged((user) => {
+        // update state
+        this.setState({
+            loading: true,
+        });
 
-        //     if (user) {
-        //         // User is signed in.
+        // check authentication
+        auth().onAuthStateChanged((user) => {
 
-        //         // update state
-        //         this.setState({
-        //             loading: true,
-        //         });
+            if (user) {
 
-        //         // it gets the fcmToken from the Firebase SDK,
-        //         messaging().getToken()
-        //             .then(fcmToken => {
-        //                 if (fcmToken) {
-        //                     // user has a device token
-        //                     // //////console.log.log.log.log("it has token");
-        //                     // alert(fcmToken);
-        //                     //////console.log.log.log.log("Token: ", fcmToken);
-        //                     // update token of user
-        //                     firestore().collection('users').doc(user.uid).update({ 
-        //                             fcm_token: fcmToken,
-        //                         })       
-        //                         // if ok
-        //                         .then(response => {
-                                    
-        //                             //////console.log.log.log.log("Update user fcm token");
-                                    
-        //                             // navigate to home screen
-        //                             this.props.navigation.push("Choose_Contact");
+                // User is signed in.
+                logged_user = user;
+                
+                console.log("(course introduction) logged user: ", logged_user);
 
-        //                         })
-        
-        //                         // if error
-        //                         .catch((error) => {
-        
-        //                             // user message
-        //                             Alert.alert(
-        //                                 'Sorry!',
-        //                                 'We had a problem, try to open the app again!',
-        //                                 [
-        //                                     { text: 'I will do it' },
-        //                                 ],
-        //                                 { cancelable: false },
-        //                             );
-        
-        //                             // dislpay error in //////console.log.log.log
-        //                             //////console.log.log.log.log(error);
-        
-        //                         });
-        
-        
-        //                 } else {
-        //                     // user doesn't have a device token yet
-        //                     //////console.log.log.log.log("it has not token");
-        
-        //                     // // it has not token
-        //                     // alert("It has not token!");
-        //                     // user message
-        //                     Alert.alert(
-        //                         'Sorry!',
-        //                         'We had a problem, try to open the app again!',
-        //                         [
-        //                             { text: 'I will do it' },
-        //                         ],
-        //                         { cancelable: false },
-        //                     );
+                // update state
+                this.setState({
+                    loading: false,
+                });
 
-        //                     // update state
-        //                     this.setState({
-        //                         loading: false,
-        //                     });
+            }
 
-        //                 }
-        //             })
-        //             .catch(error => {
+            // if user is not logged
+            else {
+                
+                this.props.navigation.push("Login");
 
-        //                 //////console.log.log.log.log("error in user authentication: ", error);
-                        
-        //                 // update state
-        //                 this.setState({
-        //                     loading: false,
-        //                 });
-        //             })
-        //     }   
-        // });
+                // update state
+                this.setState({
+                    loading: false,
+                });
+
+            }
+        });
+
     }
 
     start_course() {
@@ -191,6 +140,12 @@ class Course_Introduction extends Component {
         // if it is correct, redirect to course
         this.props.navigation.push("Course_Lessons", {course: this.state.course});
             
+    }
+
+    buy_course() {
+
+        Linking.openURL(this.state.course.course_buy_link);
+
     }
 
     // Render method
@@ -206,65 +161,139 @@ class Course_Introduction extends Component {
                         // justifyContent: 'center',
                         // alignItems: 'center'
                         flex:1,
-                        flexDirection:'row',
+                        flexDirection:'column',
                         alignItems:'center',
                         justifyContent:'space-around',
+                        // backgroundColor: "yellow",
+                        // width: "100%",
                     }}
                 >
 
-                        {!this.state.loading
-                        
-                            ?
+                    {/* app bar */}
+                    <App_Bar/>
 
-                                <View>
+                    {/* course description */}
+                    {!this.state.loading
+                    
+                        ?
 
-                                    {/* card */}
-                                    <Card>
+                            <View
+                                style={{
+                                    // display: "flex",
+                                    // justifyContent: "center",
+                                    // alignItems: "center",
+                                    // flex: 1,
+                                    // display: "flex",
+                                    flex:1,
+                                    flexDirection:'column',
+                                    alignItems:'center',
+                                    justifyContent:'space-around',
+                                    // backgroundColor: "orange",
+                                    width: "100%",
+                                    // justifyContent:'space-around',
+                                }}
+                            >
 
-                                        <Card.Title 
-                                            title = {this.state.course.course_name}
-                                            subtitle = {this.state.course.course_author}
-                                        />
-                                        
-                                        <Card.Cover 
-                                            source={{ uri: this.state.course.image }} 
-                                        />
+                                {/* card */}
+                                <Card
+                                    style = {{
+                                        // backgroundColor: "pink",
+                                        alignSelf: "center",
+                                        width: "100%",
+                                        elevation: 4,
+                                        // margin: 5,
+                                    }}
+                                >
 
+                                    <Card.Title 
+                                        title = {this.state.course.course_name}
+                                        subtitle = {this.state.course.course_subtitle}
+                                        // subtitle = {this.state.course.course_author}
+                                    />
+                                    
+                                    <Card.Cover 
+                                        source={{ uri: this.state.course.image }} 
+                                    />
+
+                                    <Card.Content>
+
+                                        {/* author */}
+                                        <Caption>
+                                            Author: {this.state.course.course_author}
+                                        </Caption>
+
+                                        {/* course description */}
+                                        <Paragraph>
+
+                                            {this.state.course.course_description}
+                                            
+                                        </Paragraph>
+
+                                        {/* course price */}
                                         <Card.Content>
-
-                                            <Paragraph>
-
-                                                {this.state.course.course_description}
-                                                
-                                            </Paragraph>
+                                                            
+                                            <Badge
+                                                style = {{
+                                                    backgroundColor: "green",
+                                                }}
+                                            >
+                                                {this.state.course.course_price != 0 ? (this.state.course.course_price + " USD") : "FREE"}
+                                            </Badge>
 
                                         </Card.Content>
+
+                                    </Card.Content>
+                                        
+                                    <Card.Actions
+                                        style = {{
+                                            alignSelf: "center",
+                                        }}
+                                    >
+
+                                        {/* check if user is in course */}
+
+                                        {
+                                            (this.state.course.registered_users.includes(logged_user.uid)) 
                                             
-                                        <Card.Actions
-                                            style = {{
-                                                alignSelf: "center",
-                                            }}
-                                        >
-
-                                            <Button
-                                                icon = "arrow-right-circle"
-                                                // buttonStyle = {{alignSelf: "center"}}
-                                                mode = "contained"
-                                                onPress={() => this.start_course()}
-                                            >
-                                                Start the course
-                                            </Button>
+                                            ? 
                                             
-                                        </Card.Actions>
+                                                // start course
+                                                <Button
+                                                    icon = "arrow-right-circle"
+                                                    // buttonStyle = {{alignSelf: "center"}}
+                                                    mode = "contained"
+                                                    onPress={() => this.start_course()}
+                                                >
 
-                                    </Card>
+                                                    Start the course
 
-                                </View>
-                            :
+                                                </Button>
 
-                                <ActivityIndicator/>
-                                    
-                        }
+                                            :
+                                                // buy course
+                                                <Button
+                                                    icon = "arrow-right-circle"
+                                                    // buttonStyle = {{alignSelf: "center"}}
+                                                    mode = "contained"
+                                                    onPress={() => this.buy_course()}
+                                                >
+
+                                                    {this.state.course.course_price != 0 ? "Buy course now" : "Request course registration"}
+
+                                                </Button>
+
+                                        }
+
+                                    </Card.Actions>
+
+                                </Card>
+
+                            </View>
+                        :
+
+                            <ActivityIndicator size = "large"/>
+                                
+                    }
 
                 </View>
         );
@@ -273,23 +302,23 @@ class Course_Introduction extends Component {
 
 }
 
-const styles = StyleSheet.create({
-    button: {
-        margin: 10,
-    },  
-    item: {
-        // margin: 15,
-        borderBottomWidth: 1,
-        // padding: 20,
-        borderBottomColor: "rgba(14, 20, 27, 0.21)"
-        // borderBo
-    },
-    text: {
-        // fontSize: 15,
-        textAlign: "center",
-        // margin: 10,
-    }
-})
+// const styles = StyleSheet.create({
+//     button: {
+//         margin: 10,
+//     },  
+//     item: {
+//         // margin: 15,
+//         borderBottomWidth: 1,
+//         // padding: 20,
+//         borderBottomColor: "rgba(14, 20, 27, 0.21)"
+//         // borderBo
+//     },
+//     text: {
+//         // fontSize: 15,
+//         textAlign: "center",
+//         // margin: 10,
+//     }
+// })
 
 // const TabNavigator = createBottomTabNavigator({
 //   Places_by_Category: { screen: 'Places_by_Category' },

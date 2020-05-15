@@ -1,27 +1,13 @@
 import React, { Component } from 'react';
 import {
-    // Alert,
-    // // Platform,
     StyleSheet,
-    // Button,
-    // Text,
     View,
-    // Image,
-    // ProgressBarAndroid,
-    // FlatList,
-    // ImageBackground,
-    TouchableOpacity
-    // PermissionsAndroid,
 } from 'react-native';
-// import {
-//     // Input,
-//     Button
-// } from 'react-native-elements'
 import { 
     withNavigation,
-    // NavigationActions,
-    // StackActions,
 } from 'react-navigation';
+
+import App_Bar from "../../components/app_bar/app_bar.component";
 
 import Video from 'react-native-video';
 import AudioPlayer from 'react-native-play-audio';
@@ -36,6 +22,7 @@ import {
     Surface,
 } from 'react-native-paper';
 
+import Voice from '@react-native-community/voice';
 
 // // fake course
 // const course = {
@@ -55,7 +42,8 @@ class Course_Lessons extends Component {
     static navigationOptions = ({ navigation }) => {
 
         return {
-            title: navigation.state.params.course.course_name,
+            // title: navigation.state.params.course.course_name,
+            header: null,
             // header: "Welcome",
             //   headerLeft: null,
             // headerLeft: <Image 
@@ -66,7 +54,7 @@ class Course_Lessons extends Component {
             //   backgroundColor: "#9669AA",
             //   fontWeight: 20,
             // },
-            headerTintColor: 'black',
+            // headerTintColor: 'black',
             //   headerTitleStyle: {
             //     fontSize: 30,
             //     fontFamily: "Lobster-Regular"
@@ -95,14 +83,66 @@ class Course_Lessons extends Component {
             // // password: "123123",
             loading: false,
             play_video: false,
+            // boolean to speech 
+            speaking: false,
+            // user speech
+            user_speech: null,
             // loading_video: false,
         };
 
         this.display_lesson = this.display_lesson.bind(this);
         // this.register = this.register.bind(this);
 
+        Voice.onSpeechStart = this.onSpeechStart;
+        Voice.onSpeechEnd = this.onSpeechEnd;
+        Voice.onSpeechResults = this.onSpeechResults;
+
+
     }
-    
+
+    onSpeechResults = e => {
+
+        // update state
+        this.setState({
+
+            user_speech: e.value[0],
+
+        });
+        
+        // check if user speech is correct
+        if (this.state.lessons[this.state.current_lesson].correct_answer.toLowerCase() == e.value[0].toLowerCase()) {
+
+            alert("Very good!");
+
+        }
+
+        else {
+
+            alert("Ups! It is not correct, try it again")
+
+        }
+    }
+
+    onSpeechEnd = e => {
+
+        // console.log(e);
+        
+        this.setState({
+            // end: '√',
+            speaking: false,
+        });
+    };
+
+    onSpeechStart = e => {
+
+        // console.log("start speaking");
+
+        this.setState({
+            // started: '√',
+            speaking: true,
+        });
+    };
+
     componentDidMount() {
 
         // // check notifications permmissions
@@ -320,6 +360,116 @@ class Course_Lessons extends Component {
         // })
     }
 
+    // dislpay seccion of audio
+    display_audio(current_lesson) {
+
+        return (
+
+            <View
+                style = {{
+                    flex:1,
+                    flexDirection:'column',
+                    alignItems:'center',
+                    justifyContent:'space-around',
+                    // backgroundColor: "yellow",
+                    width: "100%",
+                }}
+
+            >
+                <Text>
+                    Listen to the audio and then answer the question
+                </Text>
+
+                {/* display audio options */}
+                <View
+                    style = {{
+                        flex:1,
+                        flexDirection:'row',
+                        alignItems:'center',
+                        justifyContent:'space-around',
+                        // backgroundColor: "orange",
+                        width: "100%",
+                    }}
+                >
+
+                    {/* play audio */}
+                    <Button
+
+                        icon = {!this.state.play_audio ? "play-circle-outline" : "stop"}
+                        
+                        // title = "Listen the audio"
+                        onPress={() => {
+
+                            const play_audio = !this.state.play_audio;
+
+                            
+                            if (play_audio) {
+                                
+                                this.play_audio(current_lesson.audio_url);
+                            }
+                            
+                            else {
+                                this.stop_audio(current_lesson.audio_url);
+                            }
+                            
+                            // update state
+                            this.setState({
+                                play_audio: play_audio,
+                            })
+                        }}
+
+                        mode = "contained"
+                    >
+
+                        {!this.state.play_audio ? "Listen audio" : "Stop audio"}
+
+                    </Button>
+
+                    {/* stop audio */}
+                    {/* <Button
+                        icon = "stop"
+                        mode = "contained"
+                        // title = "Stop audio"
+                        onPress={() => {
+                            this.stop_audio(current_lesson.audio_url);
+                        }}
+                        // buttonStyle={[
+                        //     styles.button,
+                        //     {
+                            //         // backgroundColor: "red",
+                            //         // display: "flex",
+                            //         // flex: 1,
+                        //         // textAlign: "center",
+                        //         // height: 80,
+                        //         // width: 300,
+                        //         // width: "100%",
+                        //         // justifyContent: 'center',
+                        //     }
+                        // ]}
+                        >
+                        Stop audio
+                    </Button> */}
+
+                </View>
+                
+                {/* audio transcription */}
+                <Text
+                    style = {[
+                        styles.text,
+                        {
+                            flex: 1,
+                        }
+                    ]}
+                >
+                    {current_lesson.audio_transcription}
+                </Text>
+
+            </View>
+            
+        )
+
+    }
+
     // display lesson
     display_lesson(current_lesson_number) {
         
@@ -410,7 +560,7 @@ class Course_Lessons extends Component {
                 return (
 
                     // display quiz
-                    <View
+                    <Surface
                         style = {{
                             flex:1,
                             flexDirection:'column',
@@ -420,7 +570,7 @@ class Course_Lessons extends Component {
                         }} 
                     >
                         {this.dislay_quiz(current_lesson)}
-                    </View>
+                    </Surface>
 
                 );
 
@@ -457,93 +607,7 @@ class Course_Lessons extends Component {
                                 // padding:
                             }}
                         >
-                            <Text>
-                                Listen the audio and then answer the question
-                            </Text>
-
-                            {/* display audio options */}
-                            <View
-                                style = {{
-                                    flex:1,
-                                    flexDirection:'row',
-                                    alignItems:'center',
-                                    justifyContent:'space-around',
-                                    // backgroundColor: "orange",
-                                    width: "100%",
-                                }}
-                            >
-
-                                {/* play audio */}
-                                <Button
-
-                                    icon = {!this.state.play_audio ? "play-circle-outline" : "stop"}
-                                    
-                                    // title = "Listen the audio"
-                                    onPress={() => {
-
-                                        const play_audio = !this.state.play_audio;
-
-                                        
-                                        if (play_audio) {
-                                            
-                                            this.play_audio(current_lesson.audio_url);
-                                        }
-                                        
-                                        else {
-                                            this.stop_audio(current_lesson.audio_url);
-                                        }
-                                        
-                                        // update state
-                                        this.setState({
-                                            play_audio: play_audio,
-                                        })
-                                    }}
-
-                                    mode = "contained"
-                                >
-
-                                    {!this.state.play_audio ? "Listen audio" : "Stop audio"}
-
-                                </Button>
-
-                                {/* stop audio */}
-                                {/* <Button
-                                    icon = "stop"
-                                    mode = "contained"
-                                    // title = "Stop audio"
-                                    onPress={() => {
-                                        this.stop_audio(current_lesson.audio_url);
-                                    }}
-                                    // buttonStyle={[
-                                    //     styles.button,
-                                    //     {
-                                        //         // backgroundColor: "red",
-                                        //         // display: "flex",
-                                        //         // flex: 1,
-                                    //         // textAlign: "center",
-                                    //         // height: 80,
-                                    //         // width: 300,
-                                    //         // width: "100%",
-                                    //         // justifyContent: 'center',
-                                    //     }
-                                    // ]}
-                                    >
-                                    Stop audio
-                                </Button> */}
-
-                            </View>
-                            
-                            {/* audio transcription */}
-                            <Text
-                                style = {[
-                                    styles.text,
-                                    {
-                                        flex: 1,
-                                    }
-                                ]}
-                            >
-                                {current_lesson.audio_transcription}
-                            </Text>
+                            {this.display_audio(current_lesson)}
 
                         </Surface>
                         
@@ -568,6 +632,93 @@ class Course_Lessons extends Component {
                 );
                 
                 break;
+
+            // audio_speech
+            case "audio_speech":
+
+                //   return the template
+                return (
+                    
+                    <View
+                        style = {{
+                            flex:1,
+                            flexDirection:'column',
+                            alignItems:'center',
+                            justifyContent:'space-around',
+                            // backgroundColor: "pink",
+                            width: "100%",
+                        }}
+                    >
+                        
+                        <Surface
+                            style = {{
+                                flex:1,
+                                flexDirection:'column',
+                                alignItems:'center',
+                                justifyContent:'space-around',
+                                // backgroundColor: "red",
+                                width: "100%",
+                                margin: 5,
+                                elevation: 4,
+                                // padding:
+                            }}
+                        >
+                            
+                            {this.display_audio(current_lesson)}
+
+                        </Surface>
+                        
+                        {/* display speech part */}
+                        <Surface
+                            style = {{
+                                flex:3,
+                                flexDirection:'column',
+                                alignItems:'center',
+                                justifyContent:'space-around',
+                                margin: 5,
+                                elevation: 4,
+                                padding: 5,
+                                // backgroundColor: "pink",
+                                // width: "50%",
+                            }} 
+                        >
+
+                            {/* instruction to the speech */}
+                            <Text>
+                                {current_lesson.instruction}
+                            </Text>
+
+                            {/* speech button */}
+                            <Button
+                                icon = "microphone"
+                                mode = "contained"
+                                onPress = {() => {
+                                    
+                                    Voice.start('en-US');
+                                    
+                                }}
+                                // style = {{
+                                //     backgroundColor: this.state.speaking && "red",
+                                // }}
+                            >
+
+                                {this.state.speaking ? "Speaking" : "Speak"}
+
+                            </Button>
+
+                            {/* user speech */}
+                            {
+                                <Text>
+                                    You are saying: {this.state.user_speech}
+                                </Text>
+                            }
+                        </Surface>
+    
+                    </View>
+
+                );
+
+                break;
           }
 
             
@@ -589,6 +740,9 @@ class Course_Lessons extends Component {
                     }}
                 >
 
+                    {/* app bar */}
+                    <App_Bar />
+                    
                         {!this.state.loading
                         
                             ?
