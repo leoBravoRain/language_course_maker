@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-    // Alert,
+    Alert,
     // // Platform,
     // StyleSheet,
     // Button,
@@ -160,7 +160,23 @@ class Course_Introduction extends Component {
 
     buy_course() {
 
-        Linking.openURL(this.state.course.course_buy_link);
+        Alert.alert(
+            "Buy the course",
+            "We are going to redirect you to the payment section (Currently is a form in which you have to enter the payment you have to do in order to get the course)",
+            [
+                {
+                    text: "Buy the course", 
+                    onPress: () => {
+                        
+                        Linking.openURL(this.state.course.course_buy_link);
+
+                    }
+                },
+                {
+                    text: "Cancel",
+                }
+            ]
+        )
 
     }
 
