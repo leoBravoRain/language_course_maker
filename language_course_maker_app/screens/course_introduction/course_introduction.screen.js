@@ -38,6 +38,7 @@ import {
 } from 'react-native-paper';
 
 import auth from '@react-native-firebase/auth';
+import firestore from "@react-native-firebase/firestore";
 
 import App_Bar from "../../components/app_bar/app_bar.component";
 
@@ -86,9 +87,10 @@ class Course_Introduction extends Component {
             // // user_email: "1andreatapiasalinas@gmail.com",
             // // password: "123123",
             loading: true,
+            user_information: null,
         };
 
-        console.log("(course_introduction registered users: ", this.state.course.registered_users);
+        // console.log("(course_introduction registered users: ", this.state.course.registered_users);
 
         this.start_course = this.start_course.bind(this);
         // this.register = this.register.bind(this);
@@ -111,12 +113,26 @@ class Course_Introduction extends Component {
                 // User is signed in.
                 logged_user = user;
                 
-                console.log("(course introduction) logged user: ", logged_user);
+                // console.log("(course introduction) logged user: ", logged_user);
 
-                // update state
-                this.setState({
-                    loading: false,
-                });
+                // get user from DB
+                firestore().collection("users").doc(logged_user.uid).get()
+                .then(doc => {
+
+                    if(doc.exists) {
+
+                        this.setState({
+                            user_information: doc.data(),
+                            loading: false,
+                        })
+                        
+                    }
+                })
+                .catch(e => {
+
+                    console.log("(course introduction) error trying to get the user: ", e);
+                    
+                })
 
             }
 
@@ -265,7 +281,7 @@ class Course_Introduction extends Component {
                                                     onPress={() => this.start_course()}
                                                 >
 
-                                                    Start the course
+                                                    {(this.state.course.course_id in this.state.user_information.registered_courses && this.state.user_information.registered_courses[this.state.course.course_id]["current_lesson"] > 0) ? "Continue the Course" : "Start the course"}
 
                                                 </Button>
 

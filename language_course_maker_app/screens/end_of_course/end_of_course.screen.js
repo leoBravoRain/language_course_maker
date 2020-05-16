@@ -30,13 +30,16 @@ import {
     ActivityIndicator,
 } from 'react-native-paper';
 
+import App_Bar from "../../components/app_bar/app_bar.component";
+
 class End_of_Course extends Component {
 
     // Options for header bar
     static navigationOptions = ({ navigation }) => {
 
         return {
-            title: "Final",
+            // title: "Final",
+            header: null,
             // header: "Welcome",
             //   headerLeft: null,
             // headerLeft: <Image 
@@ -47,7 +50,7 @@ class End_of_Course extends Component {
             //   backgroundColor: "#9669AA",
             //   fontWeight: 20,
             // },
-            headerTintColor: 'black',
+            // headerTintColor: 'black',
             //   headerTitleStyle: {
             //     fontSize: 30,
             //     fontFamily: "Lobster-Regular"
@@ -213,59 +216,74 @@ class End_of_Course extends Component {
                 }}
             >
 
-                    {!this.state.loading
-                    
-                        ?
+                {/* app bar */}
+                <App_Bar />
 
-                            <View
+                {!this.state.loading
+                
+                    ?
+
+                        <View
+                            style = {{
+                                // display: "flex",
+                                // flex: 1,
+                                // justifyContent: 'center',
+                                // alignItems: 'center'
+                                // flex:1,
+                                // flexDirection:'column',
+                                // alignItems:'center',
+                                // justifyContent:'space-around',
+                                // backgroundColor: "green",
+                                flex:1,
+                                flexDirection:'column',
+                                alignItems:'center',
+                                justifyContent:'space-around',
+                                width: "100%",
+                            }}
+                        >
+
+                            {/* card */}
+                            <Card
                                 style = {{
-                                    // display: "flex",
-                                    // flex: 1,
-                                    // justifyContent: 'center',
-                                    // alignItems: 'center'
-                                    // flex:1,
-                                    // flexDirection:'column',
-                                    // alignItems:'center',
-                                    // justifyContent:'space-around',
-                                    // backgroundColor: "green",
-                                    width: "100%"
+                                    // backgroundColor: "pink",
+                                    alignSelf: "center",
+                                    width: "100%",
+                                    elevation: 4,
+                                    // margin: 5,
                                 }}
                             >
 
-                                {/* card */}
-                                <Card>
-
-                                    <Card.Title 
-                                        title = {this.state.course.course_name}
-                                        subtitle = {this.state.course.course_author}
-                                    />
-                                    
-                                    <Card.Cover 
-                                        source={{ uri: this.state.course.image }} 
-                                    />
-
-                                    <Card.Content>
-
-                                        <Paragraph
-                                            style = {{
-                                                textAlign: "center",
-                                            }}
-                                        >
-
-                                            {this.state.course.final_course_message}
-                                            
-                                        </Paragraph>
-
-                                    </Card.Content>
-                                        
-                                </Card>
-
-                            </View>
-                        :
-
-                            <ActivityIndicator/>
+                                <Card.Title 
+                                    title = {this.state.course.course_name}
+                                    subtitle = {this.state.course.course_author}
+                                />
                                 
-                    }
+                                <Card.Cover 
+                                    source={{ uri: this.state.course.image }} 
+                                />
+
+                                <Card.Content>
+
+                                    <Paragraph
+                                        style = {{
+                                            textAlign: "center",
+                                        }}
+                                    >
+
+                                        {this.state.course.final_course_message}
+                                        
+                                    </Paragraph>
+
+                                </Card.Content>
+                                    
+                            </Card>
+
+                        </View>
+                    :
+
+                        <ActivityIndicator/>
+                            
+                }
 
             </View>
         );
