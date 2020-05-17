@@ -14,8 +14,6 @@ import App_Bar from "../../components/app_bar/app_bar.component";
 import Video from 'react-native-video';
 import YouTube from "react-native-youtube";
 
-// import AudioPlayer from 'react-native-play-audio';
-import SoundPlayer from 'react-native-sound-player'
 import Sound from "react-native-sound";
 
 import { 
