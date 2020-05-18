@@ -210,6 +210,40 @@ class Register extends Component {
         // });
     }
 
+    // add user to demo course
+    add_user_to_demo_course(user_id) {
+
+        // demo course ID
+        const demo_course_id = "Jg8WKAy7wixKvEaoED6o";
+
+        // update user registered courses
+        firestore().collection("users").doc(user_id).update({
+            // demo course ID
+            registered_courses: {
+                Jg8WKAy7wixKvEaoED6o: {
+                    current_lesson: 0,
+                },
+            }
+        })
+        .then(res => {
+            console.log("(register) registered courses updated in user information");
+        })
+        .catch(e => {
+            console.log("(register) error trying to update registered courses in user: ", e);
+        });
+
+        // add user to demo course
+        firestore().collection("courses").doc(demo_course_id).update({
+            registered_users: firestore.FieldValue.arrayUnion(user_id),
+        })
+        .then(res => {
+            console.log("(register) registered users updated in course information");
+        })
+        .catch(e => {
+            console.log("(register) error trying to update registered users in course: ", e);
+        });
+    }
+
     register() {
 
         // console.log("starting register");
@@ -233,17 +267,21 @@ class Register extends Component {
                     // get user id
                     const user_uid_ = res.user.uid;
 
+                    
                     // new user structure
                     const new_user = {
                         email: this.state.user_email,
                         name: this.state.user_name,
                     };
-                            
+                    
                     // add user to database
                     firestore().collection('users').doc(user_uid_).set(new_user)
-
+                    
                     // if ok
                     .then(response => {
+                        
+                        // add new user to demo course
+                        this.add_user_to_demo_course(user_uid_);
 
                         // navigate to Home_Student
                         this.props.navigation.push("Home_Student");

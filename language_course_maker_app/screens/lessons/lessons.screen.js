@@ -241,9 +241,9 @@ class Course_Lessons extends Component {
     // track the last current lesson
     store_last_current_lesson(last_current_lesson) {
 
-        // console.log("(lessons) last lesson: ", last_current_lesson);
+        console.log("(lessons) last lesson: ", last_current_lesson);
 
-        // console.log("(lessons) logged_user: ", logged_user);
+        console.log("(lessons) logged_user: ", logged_user);
 
         
         // if user is defined
@@ -256,7 +256,7 @@ class Course_Lessons extends Component {
             .then(doc => {
                 if (doc.exists){
                     
-                    // console.log("(lessons) user information: ", doc.data());
+                    console.log("(lessons) user information: ", doc.data());
 
                     // get array of registered courses
                     var registered_courses = doc.data().registered_courses;
@@ -703,19 +703,6 @@ class Course_Lessons extends Component {
                                                             })
                                                         }}
 
-                                                    // buttonStyle={[
-                                                    //     styles.button,
-                                                    //     {
-                                                    //         // backgroundColor: "red",
-                                                    //         // display: "flex",
-                                                    //         // flex: 1,
-                                                    //         // textAlign: "center",
-                                                    //         // height: 80,
-                                                    //         // width: 300,
-                                                    //         // width: "100%",
-                                                    //         // justifyContent: 'center',
-                                                    //     }
-                                                    // ]}
                                                 >
 
                                                     Next
@@ -749,19 +736,6 @@ class Course_Lessons extends Component {
                                                         
                                                     }}
                                                     
-                                                    // buttonStyle={[
-                                                    //     styles.button,
-                                                    //     {
-                                                    //         // backgroundColor: "red",
-                                                    //         // display: "flex",
-                                                    //         // flex: 1,
-                                                    //         // textAlign: "center",
-                                                    //         // height: 80,
-                                                    //         // width: 300,
-                                                    //         // width: "100%",
-                                                    //         // justifyContent: 'center',
-                                                    //     }
-                                                    // ]}
                                                 >
 
                                                     Finish
